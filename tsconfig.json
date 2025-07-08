@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    // ✅ Required for node module resolution
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "esnext",
+
+    // ✅ These help Firebase work properly in TS
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    // ✅ Keep skipLibCheck to avoid type conflicts
+    "skipLibCheck": true,
+
+    // ✅ Good practice for TS strictness
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // ✅ You can leave these as you have them
+    "noImplicitAny": false,
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "strictNullChecks": false,
+    "allowJs": true
+  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
