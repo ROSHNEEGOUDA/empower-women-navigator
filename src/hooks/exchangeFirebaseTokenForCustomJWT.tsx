@@ -4,7 +4,7 @@ export async function exchangeFirebaseTokenForCustomJWT(
   firebaseUser: User
 ): Promise<string> {
   const firebaseIdToken = await firebaseUser.getIdToken();
-  const res = await fetch("http://localhost:3000/auth/custom-token", {
+  const res = await fetch("https://empower-women-navigator-backend01.onrender.com/auth/custom-token", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${firebaseIdToken}`,
