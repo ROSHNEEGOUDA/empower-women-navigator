@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/d43b2af9-6c60-47f0-87f3-16f803c6451a
+**URL**: https://empower-women-navigator.vercel.app/
 
 ## How can I edit this code?
 
