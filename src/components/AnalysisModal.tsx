@@ -5,7 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { TrendingUp, Target, AlertCircle } from 'lucide-react';
+import { predictLoanApproval, UserLoanData, LoanPrediction, getCreditScoreColor, getCreditScoreBadgeColor } from '@/lib/mlApi';
 
 interface AnalysisModalProps {
   onClose: () => void;
