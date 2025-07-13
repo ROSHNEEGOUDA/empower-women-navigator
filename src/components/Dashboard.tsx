@@ -123,7 +123,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                  {t("CreditSakti")}
+                  {t("CreditSakhi")}
                 </h1>
                 <p className="text-sm text-gray-600">
                   {t("dashboardSubtitle")}
