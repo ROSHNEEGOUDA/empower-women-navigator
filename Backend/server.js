@@ -5,6 +5,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const { spawn } = require("child_process");
+const fs = require("fs");
 
 dotenv.config();
 
@@ -12,19 +13,33 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(
-    // Make sure to resolve the correct absolute path
-    path.resolve(__dirname, "./serviceAccountKey.json")
-  ),
-});
+// Initialize Firebase Admin SDK (optional for ML demo)
+let firebaseEnabled = false;
+const serviceAccountPath = path.resolve(__dirname, "./serviceAccountKey.json");
+
+if (fs.existsSync(serviceAccountPath)) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccountPath),
+    });
+    firebaseEnabled = true;
+    console.log("✅ Firebase Admin SDK initialized");
+  } catch (error) {
+    console.log("⚠️  Firebase initialization failed:", error.message);
+  }
+} else {
+  console.log("⚠️  Firebase service account not found. Running without authentication for ML demo.");
+}
 
 // Your own JWT secret
 const JWT_SECRET = process.env.JWT_SECRET || "SUPER_SECRET_KEY";
 
 // 1️⃣ Endpoint to verify Firebase ID token & issue your JWT
 app.post("/auth/custom-token", async (req, res) => {
+  if (!firebaseEnabled) {
+    return res.status(503).json({ error: "Firebase authentication not available in demo mode" });
+  }
+
   const firebaseToken = req.headers.authorization?.split(" ")[1];
   if (!firebaseToken) return res.status(401).json({ error: "No Firebase token provided" });
 
@@ -63,15 +78,23 @@ app.get("/protected", (req, res) => {
   }
 });
 
-// 3️⃣ ML Prediction Endpoint
+// 3️⃣ ML Prediction Endpoint (demo mode - authentication optional)
 app.post("/ml/predict-loan", async (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "No token provided" });
+  // In demo mode, skip authentication
+  if (firebaseEnabled) {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "No token provided" });
 
+    try {
+      // Verify JWT token
+      const decoded = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      console.error(err);
+      return res.status(401).json({ error: "Invalid token" });
+    }
+  }
+  
   try {
-    // Verify JWT token
-    const decoded = jwt.verify(token, JWT_SECRET);
-    
     // Get user data from request body
     const userData = req.body;
     
@@ -105,7 +128,7 @@ app.post("/ml/predict-loan", async (req, res) => {
           res.json({
             success: true,
             prediction,
-            user: decoded.email
+            message: "Prediction completed successfully"
           });
         } catch (parseError) {
           res.status(500).json({ error: "Failed to parse ML prediction result" });
@@ -122,14 +145,23 @@ app.post("/ml/predict-loan", async (req, res) => {
   }
 });
 
-// 4️⃣ ML Model Training Endpoint (for development)
+// 4️⃣ ML Model Training Endpoint (for development, demo mode - authentication optional)
 app.post("/ml/train", async (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "No token provided" });
+  // In demo mode, skip authentication
+  if (firebaseEnabled) {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "No token provided" });
 
+    try {
+      // Verify JWT token
+      const decoded = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      console.error(err);
+      return res.status(401).json({ error: "Invalid token" });
+    }
+  }
+  
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    
     // Call Python ML service to train model
     const pythonProcess = spawn('python', [
       path.join(__dirname, 'ml_service.py'),
@@ -166,7 +198,7 @@ app.post("/ml/train", async (req, res) => {
     
   } catch (err) {
     console.error(err);
-    res.status(401).json({ error: "Invalid token" });
+    res.status(500).json({ error: "Training process failed" });
   }
 });
 
