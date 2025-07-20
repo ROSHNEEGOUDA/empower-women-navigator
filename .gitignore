@@ -7,11 +7,18 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
 dist
 dist-ssr
 *.local
 .env
+
+# Lock files (regenerated on install)
+package-lock.json
+yarn.lock
+bun.lockb
+pnpm-lock.yaml
 
 # Editor directories and files
 .vscode/*
@@ -26,8 +33,13 @@ dist-ssr
 
 # ML and Backend specific
 Backend/node_modules/
+Backend/package-lock.json
 Backend/serviceAccountKey.json
+Backend/test_data.json
+Backend/test_ml.py
+Backend/model_evaluation.py
 firebase-adminsdk-*.json
+*.env
 
 # Python
 __pycache__/
@@ -48,3 +60,19 @@ venv.bak/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Development and testing files
+PULL_REQUEST_DESCRIPTION.md
+test_*.py
+*_test.py
+*.test.js
+*.test.ts
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
